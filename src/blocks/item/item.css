@@ -1,0 +1,7 @@
+.item {
+  background-color: #fff;
+  border-radius: 10px;
+  list-style-type: none;
+  position: relative;
+  padding-bottom: 20px;
+}
