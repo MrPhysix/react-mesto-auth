@@ -5,14 +5,12 @@
 }
 
 .hover-anim:hover {
-  opacity: .6;
-  -webkit-transform: scale(1.05);
-  transform: scale(1.05);
+  opacity: .8;
 }
 
 .hover-anim:active {
-  -webkit-transform: scale(.9);
-  transform: scale(.9);
+  -webkit-transform: scale(.95);
+  transform: scale(.95);
   -webkit-filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
   filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
 }

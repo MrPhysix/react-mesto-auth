@@ -31,6 +31,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
       onSubmit={handleSubmit}
     >
       <FormInput
+        className="popup__input"
         placeholder="Название"
         type="text"
         name="name"
@@ -38,8 +39,10 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
         maxLength={30}
         onChange={handleChange(setName)}
         value={name}
+        errorClass="popup__error"
       />
       <FormInput
+        className="popup__input"
         placeholder="Ссылка&nbsp;на&nbsp;картинку"
         type="url"
         name="link"
@@ -47,6 +50,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
         maxLength={200}
         onChange={handleChange(setLink)}
         value={link}
+        errorClass="popup__error"
       />
     </PopupWithForm>
   );

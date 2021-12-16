@@ -1,0 +1,14 @@
+.sign {
+  font-family: Inter;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 80px 30px 40px 30px;
+}
+
+@media screen and (min-width: 425px) {
+  .sign {
+    max-width: 380px;
+    margin: 120px auto 80px;
+  }
+}

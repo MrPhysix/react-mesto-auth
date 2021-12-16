@@ -1,0 +1,13 @@
+@font-face {
+  font-family: text-security-disc;
+  src: url("https://raw.githubusercontent.com/noppa/text-security/master/dist/text-security-disc.woff");
+}
+
+.sign__input_secure {
+  font-family: text-security-disc;
+  -webkit-text-security: disc;
+}
+
+.sign__input_secure::placeholder {
+  font-family: Inter;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 
 function FormInput({
+  className,
   placeholder,
   type,
   name,
@@ -8,6 +9,7 @@ function FormInput({
   maxLength,
   onChange,
   value,
+  errorClass,
 }) {
   function handleChange(evt) {
     onChange && onChange(evt);
@@ -17,7 +19,7 @@ function FormInput({
     <>
       <input
         placeholder={placeholder}
-        className="popup__input"
+        className={className}
         type={type}
         name={name}
         minLength={minLength}
@@ -26,7 +28,7 @@ function FormInput({
         onChange={handleChange}
         value={value ? value : ''}
       />
-      <span id={`${name}-error`} className="popup__error" />
+      <span id={`${name}-error`} className={errorClass} />
     </>
   );
 }

@@ -21,7 +21,7 @@ function PopupWithForm({
   }, [onSubmit]);
 
   useEffect(() => {
-    const handlerClose = {
+    const popupCloseHandler = {
       onClick: function (evt) {
         if (
           evt.target.classList.contains('popup_opened') ||
@@ -36,13 +36,12 @@ function PopupWithForm({
         }
       },
     };
-
-    isOpen && window.addEventListener('click', handlerClose.onClick);
-    isOpen && window.addEventListener('keyup', handlerClose.onKey);
+    isOpen && window.addEventListener('click', popupCloseHandler.onClick);
+    isOpen && window.addEventListener('keyup', popupCloseHandler.onKey);
 
     return () => {
-      window.removeEventListener('keyup', handlerClose.onKey);
-      window.removeEventListener('click', handlerClose.onClick);
+      window.removeEventListener('keyup', popupCloseHandler.onKey);
+      window.removeEventListener('click', popupCloseHandler.onClick);
     };
   }, [isOpen, onClose]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -52,9 +51,9 @@ function PopupWithForm({
   const formRef = React.useRef();
 
   useEffect(() => {
-    new Promise((resolve, reject) => {
+    new Promise((res) => {
       const form = formRef.current;
-      resolve(form);
+      res(form);
     }).then((form) => {
       const validation = new FormValidator(validationConfig, form);
       isOpen && validation.enableValidation();
@@ -63,13 +62,7 @@ function PopupWithForm({
   }, [isOpen, onClose]);
 
   return (
-    <div
-      className={`
-      popup
-      popup_type_$
-      {name} ${isOpen ? 'popup_opened' : ''}
-      `}
-    >
+    <div className={`popup ${isOpen ? 'popup_opened' : ''}`}>
       <div className="popup__wrapper">
         <button
           className="popup__close-button hover-anim"

@@ -28,11 +28,13 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
       onSubmit={handleSubmit}
     >
       <FormInput
+        className="popup__input"
         placeholder="Ссылка&nbsp;на&nbsp;картинку"
         type="url"
         name="avatar"
         onChange={handleChange}
         value={avatar}
+        errorClass="popup__error"
       />
     </PopupWithForm>
   );

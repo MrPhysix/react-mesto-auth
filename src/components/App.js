@@ -1,30 +1,56 @@
-import React, { useCallback, useEffect } from 'react';
+//  localStorage auth /revome
+//  header mobile верстка
+//  может быть вынести компонет и стейт infoTooltip  App
+//  currentUser обновление в header
+import React, { useCallback, useEffect, useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import '../index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import EditProfilePopup from './EditProfilePopup';
 import ImagePopup from './ImagePopup';
-import api from '../utils/api';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ConfirmPopup from './ConfirmPopup';
+import api from '../utils/api';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import Register from './Register';
+import Login from './Login';
+import * as auth from '../utils/auth';
 
 function App() {
-  const [currentUser, setCurrentUser] = React.useState({});
-  const [selectedCard, setSelectedCard] = React.useState({ isOpen: false });
-  const [isEditProfilePopupOpen, setEditProfilePopupOpen] =
-    React.useState(false);
-  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
-  const [isConfirmPopupOpen, setConfirmPopupOpen] = React.useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState({});
+  const [selectedCard, setSelectedCard] = useState({ isOpen: false });
+  const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
+  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
+  const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
+  const [isConfirmPopupOpen, setConfirmPopupOpen] = useState(false);
+
+  //
+  //  localStorage Auth
+  //
+
+  useEffect(() => {
+    function handleLocalStorageAuth() {
+      let jwt = localStorage.getItem('jwt');
+      auth.checkToken(jwt).then((res) => {
+        if (res) {
+          setLoggedIn(true);
+          currentUser.email = res.data.email;
+        }
+      });
+    }
+
+    handleLocalStorageAuth();
+  }, [currentUser]);
   //
   // Get Info
   //
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then(([info, initialCards]) => {
+      .then(([info, initialCards, jwt]) => {
         setCards(initialCards);
         setCurrentUser(info);
       })
@@ -37,7 +63,7 @@ function App() {
     api
       .changeUserAvatar(link)
       .then((res) => {
-        setCurrentUser(res);
+        setCurrentUser({ ...currentUser, res });
         closeAllPopups();
       })
       .catch((err) => console.log(err));
@@ -47,7 +73,7 @@ function App() {
     api
       .setUserInfo(info)
       .then((res) => {
-        setCurrentUser(res);
+        setCurrentUser({ ...currentUser, res });
         closeAllPopups();
       })
       .catch((err) => console.log(err));
@@ -59,7 +85,6 @@ function App() {
   const [cards, setCards] = React.useState([]);
 
   function handleCardDelete(card) {
-    console.log(card);
     const isOwn = card.owner._id === currentUser._id;
     isOwn &&
       api
@@ -97,6 +122,11 @@ function App() {
   //  Handlers
   //
 
+  function handleLogin(value) {
+    setLoggedIn(value);
+    !value && localStorage.removeItem('jwt');
+  }
+
   function confirmPopupHandler(item) {
     setSelectedCard(item);
     setConfirmPopupOpen(true);
@@ -133,16 +163,39 @@ function App() {
   return (
     <div className="root">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
-        <Main
-          cards={cards}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardRemove={confirmPopupHandler}
-        />
+        <Header loggedIn={loggedIn} handleLogin={handleLogin} />
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              loggedIn ? (
+                <Main
+                  cards={cards}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onEditAvatar={handleEditAvatarClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  onCardRemove={confirmPopupHandler}
+                />
+              ) : (
+                <Navigate to="/sign-up" />
+              )
+            }
+          />
+          <Route
+            path="/sign-up"
+            element={!loggedIn ? <Register /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/sign-in"
+            element={
+              !loggedIn ? <Login onLogin={handleLogin} /> : <Navigate to="/" />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
         <Footer />
         <ImagePopup //picture
           title={selectedCard.name}

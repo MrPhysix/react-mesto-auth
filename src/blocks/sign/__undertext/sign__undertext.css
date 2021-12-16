@@ -1,0 +1,21 @@
+.sign__undertext {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+  margin-top: 15px;
+}
+
+.sign__undertext > span {
+  color: inherit;
+  transition: .25s color ease-out,
+}
+
+.sign__undertext:hover > span {
+  color: cornflowerblue;
+}
+
