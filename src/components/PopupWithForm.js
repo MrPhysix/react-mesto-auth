@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react';
+import Popup from './Popup';
+import FormElement from './FormElement';
+import { IsLoadingContext } from '../contexts/CurrentUserContext';
+import { useContext } from 'react';
 
 function PopupWithForm({
   title,
@@ -9,60 +12,26 @@ function PopupWithForm({
   onClose,
   onSubmit,
 }) {
+  const isLoading = useContext(IsLoadingContext);
+
   function handleSubmit(evt) {
     onSubmit(evt);
-    setIsLoading(true);
   }
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, [onSubmit]);
-
-  useEffect(() => {
-    const popupCloseHandler = {
-      onClick: function (evt) {
-        if (
-          evt.target.classList.contains('popup_opened') ||
-          evt.target.classList.contains('popup__wrapper')
-        ) {
-          isOpen && onClose();
-        }
-      },
-      onKey: function (evt) {
-        if (isOpen && evt.key === 'Escape') {
-          onClose();
-        }
-      },
-    };
-    isOpen && window.addEventListener('click', popupCloseHandler.onClick);
-    isOpen && window.addEventListener('keyup', popupCloseHandler.onKey);
-
-    return () => {
-      window.removeEventListener('keyup', popupCloseHandler.onKey);
-      window.removeEventListener('click', popupCloseHandler.onClick);
-    };
-  }, [isOpen, onClose]);
-  const [isLoading, setIsLoading] = React.useState(false);
-
   return (
-    <div className={`popup ${isOpen ? 'popup_opened' : ''}`}>
-      <div className="popup__wrapper">
-        <button
-          className="popup__close-button hover-anim"
-          type="button"
-          onClick={onClose}
-        />
-        <div className="popup__container">
-          <h3 className="popup__title">{title}</h3>
-          <form className="popup__form" name={name} onSubmit={handleSubmit}>
-            {children}
-            <button className="popup__submit-button" type="submit">
-              {!isLoading ? submitText : 'Сохранение..'}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    <Popup isOpen={isOpen} name={name} onClose={onClose}>
+      <h3 className="popup__title">{title}</h3>
+      <FormElement
+        className="popup__form"
+        name={name}
+        handleSubmit={handleSubmit}
+        isLoading={isLoading}
+        submitText={submitText}
+        buttonClassName="popup__submit-button"
+      >
+        {children}
+      </FormElement>
+    </Popup>
   );
 }
 

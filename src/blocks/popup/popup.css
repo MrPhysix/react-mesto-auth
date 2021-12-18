@@ -17,11 +17,10 @@
   background: rgba(0, 0, 0, 0.5);
   visibility: hidden;
   opacity: 0;
-  -webkit-transition: visibility 0s, opacity .3s ease-out;
   transition: visibility 0s, opacity .3s ease-out;
 }
 
-.popup ~ #image-open {
+#image-open {
   background-color: aqua;
   background: rgba(0, 0, 0, 0.9);
 }

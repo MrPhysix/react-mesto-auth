@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import FormInput from './FormInput';
+import FormElement from './FormElement';
 import { Link } from 'react-router-dom';
 
 function Register({ handleSignUp }) {
@@ -17,7 +18,18 @@ function Register({ handleSignUp }) {
 
   return (
     <>
-      <form className="sign" onSubmit={handleSubmit}>
+      <FormElement
+        className="sign"
+        name="register"
+        handleSubmit={handleSubmit}
+        submitText="Зарегистрироваться"
+        buttonClassName="sign__submit-button hover-anim"
+        underText={
+          <Link to="/sign-in" className="sign__undertext">
+            Уже зарегистрированы?&nbsp;<span>Войти</span>
+          </Link>
+        }
+      >
         <h2 className="sign__title">Регистрация</h2>
         <FormInput
           className="sign__input"
@@ -41,13 +53,7 @@ function Register({ handleSignUp }) {
           value={password}
           errorClass="sign__input_error"
         />
-        <button className="sign__submit-button hover-anim" type="submit">
-          Зарегистрироваться
-        </button>
-        <Link to="/sign-in" className="sign__undertext">
-          Уже зарегистрированы?&nbsp;<span>Войти</span>
-        </Link>
-      </form>
+      </FormElement>
     </>
   );
 }

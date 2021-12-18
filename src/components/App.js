@@ -1,5 +1,5 @@
+//validation check
 import React, { useCallback, useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import '../index.css';
 import Header from './Header';
 import Main from './Main';
@@ -10,21 +10,26 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ConfirmPopup from './ConfirmPopup';
 import api from '../utils/api';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import {
+  CurrentUserContext,
+  IsLoadingContext,
+} from '../contexts/CurrentUserContext';
 import Register from './Register';
 import Login from './Login';
 import * as auth from '../utils/auth';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-const App = function () {
+function App() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [email, setEmail] = useState('');
   const [infoTooltip, setInfoTooltip] = useState({
     isOpen: false,
     result: null,
   });
   const navigate = useNavigate();
-
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [selectedCard, setSelectedCard] = useState({ isOpen: false });
@@ -95,23 +100,27 @@ const App = function () {
   // Set Info
   //
   function handleUpdateAvatar(link) {
+    setIsLoading(true);
     api
       .changeUserAvatar(link)
       .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   }
 
   function handleUpdateUser(info) {
+    setIsLoading(true);
     api
       .setUserInfo(info)
       .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   }
 
   //
@@ -144,13 +153,15 @@ const App = function () {
   }
 
   function handleAddPlaceSubmit(data) {
+    setIsLoading(true);
     api
       .addCard(data)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   }
 
   //
@@ -251,27 +262,29 @@ const App = function () {
           isOpen={selectedCard.isOpen}
           onClose={closeAllPopups}
         />
-        <EditProfilePopup // editProfile
-          isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}
-          onUpdateUser={handleUpdateUser}
-        />
-        <EditAvatarPopup // editAvatar
-          isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}
-          onUpdateAvatar={handleUpdateAvatar}
-        />
-        <AddPlacePopup // addPlace
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-          onAddPlace={handleAddPlaceSubmit}
-        />
-        <ConfirmPopup // confirm
-          isOpen={isConfirmPopupOpen}
-          onClose={closeAllPopups}
-          onSubmit={handleCardDelete}
-          card={selectedCard}
-        />
+        <IsLoadingContext.Provider value={isLoading}>
+          <EditProfilePopup // editProfile
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser}
+          />
+          <EditAvatarPopup // editAvatar
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar}
+          />
+          <AddPlacePopup // addPlace
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit}
+          />
+          <ConfirmPopup // confirm
+            isOpen={isConfirmPopupOpen}
+            onClose={closeAllPopups}
+            onSubmit={handleCardDelete}
+            card={selectedCard}
+          />
+        </IsLoadingContext.Provider>
         <InfoTooltip //компонент модального окна об успешной (или не очень) регистрации.
           isOpen={infoTooltip.isOpen}
           onClose={handleInfoTooltipClose}
@@ -280,5 +293,6 @@ const App = function () {
       </CurrentUserContext.Provider>
     </div>
   );
-};
+}
+
 export default App;

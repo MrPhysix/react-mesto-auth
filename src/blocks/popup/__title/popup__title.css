@@ -20,7 +20,7 @@
   }
 }
 
-#image-open > .popup__wrapper > .popup__title {
+#image-open-title {
   margin-top: 10px;
   margin-bottom: 0;
   color: #fff;
@@ -29,3 +29,4 @@
   line-height: 15px;
   display: inline;
 }
+
