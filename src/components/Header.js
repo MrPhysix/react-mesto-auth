@@ -1,15 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import React, { useContext, useEffect, useState } from 'react';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import React, { useEffect, useState } from 'react';
 import Logo from '../images/logo.svg';
 import closeIcon from '../images/close-icon.svg';
 import menuIcon from '../images/burg.svg';
 
-function Header({ loggedIn, handleLogin }) {
-  const [isMenuOpened, setMenuOpened] = useState(false);
-  const currentUser = useContext(CurrentUserContext);
+function Header({ loggedIn, loginHandler, email }) {
+  const [isMenuOpened, setIsMenuOpened] = useState(false);
 
-  let currentPath = useLocation().pathname;
+  const currentPath = useLocation().pathname;
   const [resolution, setResolution] = useState(
     window.matchMedia('(max-width: 880px)').matches
   );
@@ -19,16 +17,20 @@ function Header({ loggedIn, handleLogin }) {
       setResolution(window.matchMedia('(max-width: 880px)').matches);
     };
     window.addEventListener('resize', setSize, false);
+    return () => window.removeEventListener('resize', setSize, false);
   }, []);
 
-  useEffect(() => {});
+  useEffect(() => {
+    //автоскрытие меню, при изменение, если открыт бургер
+    !resolution && setIsMenuOpened(false);
+  }, [resolution]);
 
   function onLogOutClick() {
-    handleLogin(false);
+    loginHandler(false);
   }
 
   function onMenuClick() {
-    setMenuOpened(!isMenuOpened);
+    setIsMenuOpened(!isMenuOpened);
   }
 
   const menuButtonStyle = isMenuOpened
@@ -49,7 +51,7 @@ function Header({ loggedIn, handleLogin }) {
                 style={{ marginRight: '24px' }}
                 to="/"
               >
-                {currentUser.email}
+                {email}
               </Link>
             ) : (
               ''
@@ -95,7 +97,7 @@ function Header({ loggedIn, handleLogin }) {
               style={{ marginRight: '24px' }}
               to="/"
             >
-              {currentUser.email}
+              {email}
             </Link>
             <Link
               className="header__link hover-anim visible"

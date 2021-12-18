@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import FormInput from './FormInput';
-import { Link, useNavigate } from 'react-router-dom';
-import * as auth from '../utils/auth';
-import InfoTooltip from './InfoTooltip';
+import { Link } from 'react-router-dom';
 
-function Register() {
-  const [infoTooltip, setInfoTooltip] = useState({
-    isOpen: false,
-    result: null,
-  });
-
+function Register({ handleSignUp }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleChange = (setStateAction) => (evt) => {
     setStateAction(evt.target.value);
@@ -20,16 +12,9 @@ function Register() {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    auth.signUp(password, email).then((res) => {
-      if (res.status === 400) setInfoTooltip({ isOpen: true, result: false });
-      else setInfoTooltip({ isOpen: true, result: true });
-    });
+    handleSignUp(password, email);
   };
 
-  const handleInfoTooltipClose = () => {
-    if (infoTooltip.result === true) navigate('/sign-in');
-    setInfoTooltip({ isOpen: false, result: null });
-  };
   return (
     <>
       <form className="sign" onSubmit={handleSubmit}>
@@ -63,11 +48,6 @@ function Register() {
           Уже зарегистрированы?&nbsp;<span>Войти</span>
         </Link>
       </form>
-      <InfoTooltip //компонент модального окна об успешной (или не очень) регистрации.
-        isOpen={infoTooltip.isOpen}
-        onClose={handleInfoTooltipClose}
-        result={infoTooltip.result}
-      />
     </>
   );
 }

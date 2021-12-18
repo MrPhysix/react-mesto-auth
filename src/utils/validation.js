@@ -78,28 +78,8 @@ class FormValidator {
     });
   }
 
-  _removeEventListeners() {
-    this._formElement.removeEventListener('submit', (evt) => {
-      evt.preventDefault();
-      this._enableSubmitButton();
-    });
-
-    this._inputList.forEach((input) => {
-      input.removeEventListener('input', () => {
-        this._checkInputValid(input);
-        this._toggleButton();
-      });
-      this._hideInputError(input);
-      this._toggleButton();
-    });
-  }
-
   enableValidation() {
     this._setEventListeners();
-  }
-
-  disableValidation() {
-    this._removeEventListeners();
   }
 }
 

@@ -1,22 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import FormInput from './FormInput';
-import { useNavigate } from 'react-router-dom';
-import * as auth from '../utils/auth';
-import InfoTooltip from './InfoTooltip';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 //  cactus.jack@ya.ru
 //  123456
 
-function Login({ onLogin }) {
-  const currentUser = React.useContext(CurrentUserContext);
-  const [infoTooltip, setInfoTooltip] = useState({
-    isOpen: false,
-    result: null,
-  });
+function Login({ handleSignIn }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleChange = (setStateAction) => (evt) => {
     setStateAction(evt.target.value);
@@ -24,25 +14,9 @@ function Login({ onLogin }) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    auth.signIn(password, email).then((res) => {
-      if (res && res.status !== 400 && res.status !== 401) {
-        getUserInfo(res.token);
-        onLogin(true);
-        navigate('/');
-      } else setInfoTooltip({ isOpen: true, result: false });
-    });
+    handleSignIn(password, email);
   };
 
-  const handleInfoTooltipClose = () => {
-    if (infoTooltip.result === true) navigate('/sign-in');
-    setInfoTooltip({ isOpen: false, result: null });
-  };
-
-  const getUserInfo = (token) => {
-    auth.checkToken(token).then((data) => {
-      currentUser.email = data.data.email;
-    });
-  };
   return (
     <>
       <form className="sign" onSubmit={handleSubmit}>
@@ -73,11 +47,6 @@ function Login({ onLogin }) {
           Войти
         </button>
       </form>
-      <InfoTooltip //компонент модального окна об успешной (или не очень) регистрации.
-        isOpen={infoTooltip.isOpen}
-        onClose={handleInfoTooltipClose}
-        result={infoTooltip.result}
-      />
     </>
   );
 }

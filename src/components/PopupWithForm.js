@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import FormValidator from '../utils/validation';
-import { validationConfig } from '../utils/utils';
 
 function PopupWithForm({
   title,
@@ -45,21 +43,6 @@ function PopupWithForm({
     };
   }, [isOpen, onClose]);
   const [isLoading, setIsLoading] = React.useState(false);
-  //
-  //  валидация
-  //
-  const formRef = React.useRef();
-
-  useEffect(() => {
-    new Promise((res) => {
-      const form = formRef.current;
-      res(form);
-    }).then((form) => {
-      const validation = new FormValidator(validationConfig, form);
-      isOpen && validation.enableValidation();
-      onClose && validation.disableValidation();
-    });
-  }, [isOpen, onClose]);
 
   return (
     <div className={`popup ${isOpen ? 'popup_opened' : ''}`}>
@@ -71,12 +54,7 @@ function PopupWithForm({
         />
         <div className="popup__container">
           <h3 className="popup__title">{title}</h3>
-          <form
-            ref={formRef}
-            className="popup__form"
-            name={name}
-            onSubmit={handleSubmit}
-          >
+          <form className="popup__form" name={name} onSubmit={handleSubmit}>
             {children}
             <button className="popup__submit-button" type="submit">
               {!isLoading ? submitText : 'Сохранение..'}
